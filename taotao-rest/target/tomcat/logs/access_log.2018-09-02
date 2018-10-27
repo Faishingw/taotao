@@ -1,0 +1,1 @@
+0:0:0:0:0:0:0:1 - - [02/Sep/2018:00:32:10 +0800] "GET /taotao-rest/rest/itemcat/list?callback=category.getDataService HTTP/1.1" 404 949 http-bio-8081-exec-9 2

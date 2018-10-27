@@ -1,0 +1,121 @@
+1 前言
+
+在详述 @ResponseBody 和 @RequestBody 注解之前，咱先了解一下 @RequestMapping 注解，@RequestMapping 是一个用来处理请求地址映射的注解，可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径；用于方法上，表示在类的父路径下追加方法上注解中的地址将会访问到该方法。例如.
+
+/**
+* 用于类上，可以没有
+*/
+
+@RequestMapping(value = "/controllerDemo")
+public class ControllerDemo {
+    // 用于方法上，必须有
+    @RequestMapping(value = "/methodDemo")
+    public String methodDemo() {
+        return "helloWorld";
+    }
+}
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+其对应的 action 就是“ action = controllerDemo/methodDemo ”。因此，在本地访问 http://localhost:8080/controllerDemo/methodDemo 就会返回（跳转）到“ helloWorld.jsp ”页面。
+
+2 注解详述
+
+在本部分，作者将详细介绍 @ResponseBody 和 @RequestBody 注解的区别：
+
+@Responsebody 注解表示该方法的返回的结果直接写入 HTTP 响应正文（ResponseBody）中，一般在异步获取数据时使用；
+在使用 @RequestMapping 后，返回值通常解析为跳转路径，加上 @Responsebody 后返回结果不会被解析为跳转路径，而是直接写入HTTP 响应正文中。例如，异步获取 json 数据，加上 @Responsebody 注解后，就会直接返回 json 数据。
+@RequestBody 注解则是将 HTTP 请求正文插入方法中，使用适合的 HttpMessageConverter 将请求体写入某个对象。
+例如，
+
+@RequestMapping(value = "person/login")
+@ResponseBody
+public Person login(@RequestBody Person person) {   // 将请求中的 datas 写入 Person 对象中
+    return person;    // 不会被解析为跳转路径，而是直接写入 HTTP 响应正文中
+}
+1
+2
+3
+4
+5
+页面异步请求：
+
+function login() {
+    var datas = '{"name":"' + $('#name').val() + '","id":"' + $('#id').val() + '","status":"' + $('#status').val() + '"}';
+    $.ajax({
+        type : 'POST',
+        contentType : 'application/json',
+        url : "${pageContext.request.contextPath}/person/login",
+        processData : false,
+        dataType : 'json',
+        data : datas,
+        success : function(data) {
+            alert("id: " + data.id + "name: " + data.name + "status: "+ data.status);
+        },
+        error : function() {
+            alert('Sorry, it is wrong!');
+        }
+    });
+};
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+3 扩展
+
+接下来，在介绍一个 @PathVariable 注解，其用来获取请求路径（url ）中的动态参数。例如，
+
+/**
+* @RequestMapping(value = "/person/profile/{id}/{name}/{status}") 中的 {id}/{name}/{status}
+* 与 @PathVariable int id、@PathVariable String name、@PathVariable boolean status
+* 一一对应，按名匹配。
+*/
+
+@RequestMapping(value = "person/profile/{id}/{name}/{status}")
+@ResponseBody
+public Person porfile(@PathVariable int id, @PathVariable String name, @PathVariable boolean status) {
+    return new Person(id, name, status);
+}
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+页面异步请求：
+
+function profile() {
+    var url = "${pageContext.request.contextPath}/person/profile/";
+    var query = $('#id').val() + '/' + $('#name').val() + '/' + $('#status').val();
+    url += query;
+    $.get(url, function(data) {
+        alert("id: " + data.id + "name: " + data.name + "status: "
+                + data.status);
+    });

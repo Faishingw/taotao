@@ -1,0 +1,23 @@
+一旦你导入了EasyUI必须的文件，你就可以通过标记或Javascript定义一个EasyUI组件。例如：定义一个带可折叠功能的面板，你需要写的HTML代码如下：
+
+<div id="p" class="easyui-panel" style="width:500px;height:200px;padding:10px;"   
+        title="My Panel" iconCls="icon-save" collapsible="true">   
+    The panel content    
+</div>  
+
+当通过标记创建一个组件的时候，从EasyUI 1.3版开始可以用HTML5标准的'data-options'属性来改写上面的代码为： 
+
+<div id="p" class="easyui-panel" style="width:500px;height:200px;padding:10px;"   
+        title="My Panel" data-options="iconCls:'icon-save',collapsible:true">   
+    The panel content    
+</div>  
+
+
+以下是layout的东西
+4. 通过ajax读取内容
+布局是以面板为基础创建的。所有的布局面板都支持异步加载URL内容。使用异步加载技术，用户可以使自己的布局页面显示的内容更多更快。
+
+<body class="easyui-layout">   
+    <div data-options="region:'west',href:'west_content.php'" style="width:180px" ></div>   
+    <div data-options="region:'center',href:'center_content.php'" ></div>   
+</body>  
